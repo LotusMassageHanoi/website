@@ -1193,6 +1193,8 @@
                 'services.hotstone': 'Hot Stone Massage',
                 'services.deep': 'Deep Tissue Massage',
                 'services.vip': 'VIP Package',
+                'services.homeVisit': 'Home/Office Visit',
+                'services.priceCall': 'Call for Price',
                 'services.therapist': 'Available with Male or Female therapist',
                 'services.duration': 'Duration',
                 'services.min': 'min',
@@ -1259,6 +1261,8 @@
                 'services.hotstone': 'Massage Đá Nóng',
                 'services.deep': 'Massage Mô Sâu',
                 'services.vip': 'Gói VIP',
+                'services.homeVisit': 'Tại Nhà/Văn Phòng',
+                'services.priceCall': 'Gọi để biết giá',
                 'services.therapist': 'Có chuyên viên Nam hoặc Nữ',
                 'services.duration': 'Thời gian',
                 'services.min': 'phút',
@@ -1307,11 +1311,12 @@
             { id: 'hot-stone', type: 'body', duration: 90, priceVND: 650000, priceUSD: 26 },
             { id: 'deep-tissue', type: 'body', duration: 60, priceVND: 450000, priceUSD: 18 },
             { id: 'couple', type: 'body', duration: 60, priceVND: 700000, priceUSD: 28 },
-            { id: 'vip', type: 'combo', duration: 120, priceVND: 800000, priceUSD: 32 }
+            { id: 'vip', type: 'combo', duration: 120, priceVND: 800000, priceUSD: 32 },
+            { id: 'home-office-vip', type: 'home', duration: 60, priceVND: 0, priceUSD: 0, callForPrice: true }
         ];
 
-        const serviceIcons = { foot: '🦶', head: '🧘', body: '💆', combo: '🌟' };
-        const serviceTypeKeys = { foot: 'services.foot', head: 'services.head', body: 'services.body', combo: 'services.combo' };
+        const serviceIcons = { foot: '🦶', head: '🧘', body: '💆', combo: '🌟', home: '🏠' };
+        const serviceTypeKeys = { foot: 'services.foot', head: 'services.head', body: 'services.body', combo: 'services.combo', home: 'services.homeVisit' };
 
         function getServiceName(id) {
             const names = {
@@ -1322,7 +1327,8 @@
                 'hot-stone': { en: 'Hot Stone Massage', vi: 'Massage Đá Nóng' },
                 'deep-tissue': { en: 'Deep Tissue Massage', vi: 'Massage Mô Sâu' },
                 'couple': { en: 'Couple Massage', vi: 'Massage Cặp Đôi' },
-                'vip': { en: 'VIP Package (Body + Foot + Head)', vi: 'Gói VIP (Toàn Thân + Chân + Đầu)' }
+                'vip': { en: 'VIP Package (Body + Foot + Head)', vi: 'Gói VIP (Toàn Thân + Chân + Đầu)' },
+                'home-office-vip': { en: 'VIP Home/Office Visit', vi: 'VIP Tại Nhà/Văn Phòng' }
             };
             return names[id] || { en: id, vi: id };
         }
@@ -1341,7 +1347,7 @@
                     <h3 class="service-name-vi" style="display:none">${name.vi}</h3>
                     <span class="service-type" data-i18n="${serviceTypeKeys[svc.type]}">${translations.en[serviceTypeKeys[svc.type]]}</span>
                     <p class="service-duration"><span data-i18n="services.duration">${translations.en['services.duration']}</span>: ${svc.duration} <span data-i18n="services.min">${translations.en['services.min']}</span></p>
-                    <p class="service-price">${svc.priceVND.toLocaleString()}₫ <small>($${svc.priceUSD})</small></p>
+                    <p class="service-price">${svc.callForPrice ? '📞 <span data-i18n="services.priceCall">' + translations.en['services.priceCall'] + '</span>' : svc.priceVND.toLocaleString() + '₫ <small>($' + svc.priceUSD + ')</small>'}</p>
                     <p class="therapist-note" data-i18n="services.therapist">${translations.en['services.therapist']}</p>
                 `;
                 grid.appendChild(card);
@@ -1357,7 +1363,9 @@
                 opt.value = svc.id;
                 opt.dataset.en = name.en;
                 opt.dataset.vi = name.vi;
-                opt.textContent = currentLang === 'en' ? `${name.en} - ${svc.duration}min - ${svc.priceVND.toLocaleString()}₫` : `${name.vi} - ${svc.duration}phút - ${svc.priceVND.toLocaleString()}₫`;
+                opt.textContent = currentLang === 'en'
+                    ? `${name.en} - ${svc.duration}min${svc.callForPrice ? ' - 📞 Call for Price' : ' - ' + svc.priceVND.toLocaleString() + '₫'}`
+                    : `${name.vi} - ${svc.duration}phút${svc.callForPrice ? ' - 📞 Gọi để biết giá' : ' - ' + svc.priceVND.toLocaleString() + '₫'}`;
                 select.appendChild(opt);
             });
         }
